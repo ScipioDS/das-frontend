@@ -1,4 +1,4 @@
-import {Component} from '@angular/core';
+import {Component, OnInit} from '@angular/core';
 import {MatFormField, MatSuffix} from '@angular/material/form-field';
 import {MatInput} from '@angular/material/input';
 import {MatIconButton} from '@angular/material/button';
@@ -6,6 +6,8 @@ import {MatIcon} from '@angular/material/icon';
 import {MatDivider} from '@angular/material/divider';
 import {Router, RouterLink} from '@angular/router';
 import {FormsModule} from '@angular/forms';
+import {UserService} from '../../services/user.service';
+import {User} from '../../models/user';
 
 @Component({
   selector: 'app-header',
@@ -28,6 +30,19 @@ import {FormsModule} from '@angular/forms';
         </mat-form-field>
       </header>
       <mat-divider class="preknow-white"></mat-divider>
+      <div class="d-flex justify-content-between mt-2">
+        <div class="d-flex">
+          <mat-icon class="preknow-white me-2">account_circle</mat-icon>
+          @if (userSource != null) {
+            <div class="h5 preknow-logo preknow-white">{{user}}</div>
+          } @else {
+            <div class="h5 preknow-logo preknow-white" routerLink="/login">Log In</div>
+          }
+        </div>
+        @if (userSource) {
+          <div class="h5 preknow-white me-2 preknow-logo" (click)="doLogOut()">Log Out</div>
+        }
+      </div>
     </div>
   `,
   imports: [
@@ -50,10 +65,26 @@ import {FormsModule} from '@angular/forms';
     }
   `]
 })
-export class HeaderComponent {
+export class HeaderComponent implements OnInit {
   searchQuery: string = '';
+  userSource: User | null = null;
+  user: string = 'Log In';
 
-  constructor(private router: Router) {}
+  constructor(
+    private router: Router,
+    private userService: UserService,
+  ) {}
+
+  ngOnInit() {
+    this.userService.getCurrentUser().subscribe(
+      (res) => {
+        if (res) {
+          this.userSource = res;
+          this.user = res.email;
+        }
+      }
+    );
+  }
 
   onSearch(): void {
     if (this.searchQuery.trim()) {
@@ -63,5 +94,11 @@ export class HeaderComponent {
       // Option 2: Emit event to parent component (if using EventEmitter)
       // this.searchEvent.emit(this.searchQuery);
     }
+  }
+
+  doLogOut(): void {
+    this.userSource = null;
+    this.userService.doLogout();
+    this.router.navigate(['/explore']);
   }
 }
