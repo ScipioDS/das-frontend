@@ -1,0 +1,46 @@
+<app-header></app-header>
+<div class="container d-flex flex-column h-100 mt-5">
+  <div class="h1 preknow-white">{{name}}</div>
+  <div class="d-flex flex-wrap justify-content-between">
+    <div class="preknow-white-bg rounded-3 w-45 d-flex flex-column justify-content-center align-items-center pk-card-container">
+      <div class="h1 preknow-black mt-3 mb-5">Price History</div>
+      <ngx-charts-line-chart
+        [view]="view"
+        [scheme]="colorScheme"
+        [legend]="legend"
+        [showXAxisLabel]="showXAxisLabel"
+        [showYAxisLabel]="showYAxisLabel"
+        [xAxis]="xAxis"
+        [yAxis]="yAxis"
+        [xAxisLabel]="xAxisLabel"
+        [yAxisLabel]="yAxisLabel"
+        [timeline]="timeline"
+        [results]="multi"
+        (select)="onSelect($event)"
+        (activate)="onActivate($event)"
+        (deactivate)="onDeactivate($event)"
+      >
+      </ngx-charts-line-chart>
+    </div>
+    <div class="preknow-white-bg rounded-3 w-45 d-flex flex-column justify-content-center align-items-center pk-card-container">
+      @if (isLoading) {
+        <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+      } @else {
+        <div class="w-100 h-100 p-4">
+          <h2 class="preknow-black">Next Predicted Price:</h2>
+          <h3 class="preknow-black">{{predictedPrice | currency:'USD':'symbol':'1.2-2'}}</h3>
+          <mat-divider></mat-divider>
+          <h2 class="preknow-black mt-3">Trend:</h2>
+          <h3 class="preknow-black">Positive</h3>
+          <mat-divider></mat-divider>
+          <h2 class="preknow-black mt-3">Last Sale:</h2>
+          <h3 class="preknow-black">{{predictedPrice | currency:'USD':'symbol':'1.2-2'}}</h3>
+          <mat-divider></mat-divider>
+          <div class="text-end">
+            Powered by PreKnow AI
+          </div>
+        </div>
+      }
+    </div>
+  </div>
+</div>

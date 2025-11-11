@@ -1,0 +1,19 @@
+.explore-button {
+  background-color: #D03F1B;
+  border-radius: 8px;
+  padding: 32px;
+  font-size: 32px;
+  font-weight: 500;
+}
+
+.explore-button span {
+  color: #D9D9D9; /* Target the inner span that Material creates */
+}
+
+.explore-button:active {
+  background-color: #a03316; /* darker shade when clicked */
+}
+
+.explore-button:hover {
+  background-color: #b83819; /* slightly darker on hover (optional) */
+}

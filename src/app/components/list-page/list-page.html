@@ -1,0 +1,50 @@
+<app-header></app-header>
+<div class="container d-flex flex-column h-100">
+  <!-- Trending Tab -->
+  <div class="mt-5">
+    <h1 class="preknow-white">Trending Crypto</h1>
+  </div>
+  <div class="d-flex align-items-center justify-content-between mt-2 mb-5">
+    @for (item of items; track item) {
+      <div class="w-25 crypto-card d-flex flex-column justify-content-center align-items-center" style="background-color: #D9D9D9">
+        <div class="bg-light crypto-card-inner w-100 text-center">
+          <h1 class="preknow-black mt-2">{{item.name}}</h1>
+        </div>
+        <button mat-button class="explore-button w-50 mt-2 mb-2"
+                (click)="goToDetails(item.name)"
+                style="color: #D9D9D9; font-family: Georgia, serif;">Details</button>
+      </div>
+    }
+  </div>
+
+  <!-- List Tab -->
+  <div class="mt-5">
+    <h1 class="preknow-white">Top List</h1>
+  </div>
+  <div>
+    <table class="table table-borderless overflow-hidden rounded-3">
+      <thead>
+      <tr>
+        <th class="preknow-black preknow-table-header">Name</th>
+        <th class="preknow-black preknow-table-header">Price</th>
+        <th class="preknow-black preknow-table-header">Change</th>
+        <th class="preknow-black preknow-table-header">Actions</th>
+      </tr>
+      </thead>
+      <tbody>
+        @for (list_item of list_items; track list_item) {
+          <tr class="preknow-table-item">
+            <td class="preknow-black">{{list_item.name}}</td>
+            <td class="preknow-black">{{list_item.price}}</td>
+            <td class="preknow-black">{{list_item.change}}</td>
+            <td>
+              <button mat-button class="explore-button"
+                      (click)="goToDetails(list_item.name)"
+                      style="color: white; font-family: Georgia, serif;">Details</button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
+</div>

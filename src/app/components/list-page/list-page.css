@@ -1,0 +1,31 @@
+.explore-button {
+  background-color: #D03F1B;
+  border-radius: 8px;
+  padding: 16px 32px;
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.crypto-card{
+  border-radius: 12px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.crypto-card-inner{
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.preknow-table-item{
+  border-bottom: 1px solid #E0E0E0;
+  font-size: 20px;
+  padding: 12px 0;
+}
+
+.preknow-table-header{
+  font-size: 22px;
+  font-weight: 600;
+  padding-bottom: 8px;
+  background-color: #E0E0E0;
+}

@@ -1,0 +1,28 @@
+<app-header></app-header>
+<div class="container d-flex flex-column h-100">
+  <div class="h1 text-white">{{this.query}}</div>
+<table class="table table-borderless overflow-hidden rounded-3">
+  <thead>
+  <tr>
+    <th class="preknow-black preknow-table-header">Name</th>
+    <th class="preknow-black preknow-table-header">Price</th>
+    <th class="preknow-black preknow-table-header">Change</th>
+    <th class="preknow-black preknow-table-header">Actions</th>
+  </tr>
+  </thead>
+  <tbody>
+    @for (list_item of list_items; track list_item) {
+      <tr class="preknow-table-item">
+        <td class="preknow-black">{{list_item.name}}</td>
+        <td class="preknow-black">{{list_item.price}}</td>
+        <td class="preknow-black">{{list_item.change}}</td>
+        <td>
+          <button mat-button class="explore-button"
+                  (click)="goToDetails(list_item.name)"
+                  style="color: white; font-family: Georgia, serif;">Details</button>
+        </td>
+      </tr>
+    }
+  </tbody>
+</table>
+</div>

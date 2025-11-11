@@ -1,1 +1,29 @@
 /* You can add global styles to this file, and also import other style files */
+.preknow-white{
+  color: #D9D9D9;
+}
+.preknow-black{
+  color: #20292B;
+}
+.preknow-red{
+  color: #D03F1B;
+}
+.preknow-blue{
+  color: #1C96E9;
+}
+.preknow-green{
+  color: #28C79A;
+}
+.preknow-white-bg{
+  background-color: #D9D9D9;
+}
+
+.w-45{
+  width: 45% !important;
+}
+
+html, body { height: 100%; }
+body{
+  background-color: #20292B;
+  font-family: Georgia, serif;
+}

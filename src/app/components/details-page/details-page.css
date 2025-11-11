@@ -1,0 +1,7 @@
+::ng-deep .mat-mdc-progress-spinner {
+  --mdc-circular-progress-active-indicator-color: #FF8800; /* Use your desired color */
+}
+
+.pk-card-container {
+  height: 70vh;
+}
