@@ -3,6 +3,7 @@ import {LandingPage} from './components/landing-page/landing-page';
 import {ListPage} from './components/list-page/list-page';
 import {DetailsPage} from './components/details-page/details-page';
 import {LoginPage} from './components/login-page/login-page';
+import {ProfilePage} from './components/profile-page/profile-page';
 
 export const routes: Routes = [
   {
@@ -34,5 +35,15 @@ export const routes: Routes = [
     path: 'register',
     component: LoginPage,
     title: 'PreKnow - Details'
+  },
+  {
+    path: 'profile/:id',
+    component: ProfilePage,
+    title: 'PreKnow - Profile'
+  },
+  {
+    path: '**',
+    component: LandingPage,
+    title: 'PreKnow - Welcome'
   }
 ];

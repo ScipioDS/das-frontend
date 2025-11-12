@@ -34,7 +34,7 @@ import {User} from '../../models/user';
         <div class="d-flex">
           <mat-icon class="preknow-white me-2">account_circle</mat-icon>
           @if (userSource != null) {
-            <div class="h5 preknow-logo preknow-white">{{user}}</div>
+            <div class="h5 preknow-logo preknow-white" (click)="openProfile()">{{user}}</div>
           } @else {
             <div class="h5 preknow-logo preknow-white" routerLink="/login">Log In</div>
           }
@@ -100,5 +100,9 @@ export class HeaderComponent implements OnInit {
     this.userSource = null;
     this.userService.doLogout();
     this.router.navigate(['/explore']);
+  }
+
+  openProfile(): void {
+    this.router.navigate(['/profile', this.userSource?.id]);
   }
 }
