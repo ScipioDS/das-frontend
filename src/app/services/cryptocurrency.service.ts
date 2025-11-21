@@ -4,6 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {CryptoPage} from '../models/interfaces/page-response';
 import {CryptoFilter} from '../models/filter/CryptoFilter';
+import {Cryptocurrency} from '../models/cryptocurrency';
 
 @Injectable({
   providedIn: 'root'
@@ -15,6 +16,10 @@ export class CryptocurrencyService {
 
   getAllCryptocurrency() {
     return this.http.get(this.baseUrl + '/all');
+  }
+
+  getTop10Cryptocurrencies(): Observable<Cryptocurrency[]> {
+    return this.http.get<Cryptocurrency[]>(this.baseUrl + '/top10');
   }
 
   getAllCryptocurrencyPaged(page: number, pageSize: number, filter: CryptoFilter): Observable<CryptoPage> {

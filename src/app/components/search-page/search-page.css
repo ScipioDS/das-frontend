@@ -18,3 +18,8 @@
   padding-bottom: 8px;
   background-color: #E0E0E0;
 }
+
+.pk-active{
+  background-color: #D03F1B;
+  border: 1px solid #D03F1B;
+}

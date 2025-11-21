@@ -4,21 +4,21 @@
 <table class="table table-borderless overflow-hidden rounded-3">
   <thead>
   <tr>
-    <th class="preknow-black preknow-table-header">Name</th>
-    <th class="preknow-black preknow-table-header">Price</th>
-    <th class="preknow-black preknow-table-header">Change</th>
-    <th class="preknow-black preknow-table-header">Actions</th>
+    <th class="preknow-black preknow-table-header text-center">Ticker</th>
+    <th class="preknow-black preknow-table-header text-center">Price</th>
+    <th class="preknow-black preknow-table-header text-center">Last Updated</th>
+    <th class="preknow-black preknow-table-header text-center">Actions</th>
   </tr>
   </thead>
   <tbody>
     @for (list_item of list_items; track list_item) {
-      <tr class="preknow-table-item">
-        <td class="preknow-black">{{list_item.name}}</td>
-        <td class="preknow-black">{{list_item.price}}</td>
-        <td class="preknow-black">{{list_item.change}}</td>
-        <td>
+      <tr class="preknow-table-item border-bottom">
+        <td class="preknow-black text-center">{{list_item.ticker}}</td>
+        <td class="preknow-black text-center">{{list_item.price}}</td>
+        <td class="preknow-black text-center">{{list_item.lastUpdated}}</td>
+        <td class="text-center">
           <button mat-button class="explore-button"
-                  (click)="goToDetails(list_item.name)"
+                  (click)="goToDetails(list_item.ticker)"
                   style="color: white; font-family: Georgia, serif;">Details</button>
         </td>
       </tr>
@@ -34,21 +34,22 @@
   <nav aria-label="Page navigation">
     <ul class="pagination mb-0">
       <li class="page-item" [class.disabled]="isFirstPage">
-        <button class="page-link" (click)="previousPage()" [disabled]="isFirstPage">
+        <button class="page-link text-black" (click)="previousPage()" [disabled]="isFirstPage">
           Previous
         </button>
       </li>
 
       @for (page of getPageNumbers(); track page) {
         <li class="page-item" [class.active]="page === currentPage">
-          <button class="page-link" (click)="goToPage(page)">
+          <button class="page-link" (click)="goToPage(page)" [class.pk-active]="page === currentPage"
+          [style.color]="page === currentPage ? 'white' : 'black'">
             {{ page + 1 }}
           </button>
         </li>
       }
 
       <li class="page-item" [class.disabled]="isLastPage">
-        <button class="page-link" (click)="nextPage()" [disabled]="isLastPage">
+        <button class="page-link text-black" (click)="nextPage()" [disabled]="isLastPage">
           Next
         </button>
       </li>

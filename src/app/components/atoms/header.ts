@@ -87,13 +87,7 @@ export class HeaderComponent implements OnInit {
   }
 
   onSearch(): void {
-    if (this.searchQuery.trim()) {
-      // Option 1: Navigate to a search results page
-      this.router.navigate(['/search'], { queryParams: { q: this.searchQuery } });
-
-      // Option 2: Emit event to parent component (if using EventEmitter)
-      // this.searchEvent.emit(this.searchQuery);
-    }
+    this.router.navigate(['/search'], { queryParams: { q: this.searchQuery } });
   }
 
   doLogOut(): void {
