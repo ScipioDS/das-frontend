@@ -5,7 +5,7 @@ import {DetailsPage} from './components/details-page/details-page';
 import {LoginPage} from './components/login-page/login-page';
 import {ProfilePage} from './components/profile-page/profile-page';
 
-const titleBase = 'PreKnow - ';
+const titleBase = 'PreKnow v0.2 - ';
 
 export const routes: Routes = [
   {
