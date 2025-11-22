@@ -32,7 +32,7 @@ export class ProfilePage implements OnInit {
       }
     })
 
-    this.cryptoService.getAllCryptocurrency().subscribe(cryptocurrency => {
+    this.cryptoService.getSavedCrypto().subscribe(cryptocurrency => {
       this.list_items = cryptocurrency;
     })
   }

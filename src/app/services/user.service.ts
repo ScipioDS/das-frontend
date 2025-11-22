@@ -20,7 +20,6 @@ export class UserService {
     }
 
     const token = localStorage.getItem('jwtToken');
-    console.log('token', token);
     if (!token) {
       // If no token, emit null (not logged in)
       this.currentUserSubject.next(null);
@@ -29,13 +28,11 @@ export class UserService {
 
     // Check if token is expired
     if (this.isTokenExpired(token)) {
-      console.log('Token is expired');
       this.doLogout();
       return of(null);
     }
 
     // Fetch user from API and update the subject
-    console.log('Getting user');
     return this.http.get<User>(this.baseUrl + 'me').pipe(
       tap(user => this.currentUserSubject.next(user)),
       catchError(error => {

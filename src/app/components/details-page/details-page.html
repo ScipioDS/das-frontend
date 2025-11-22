@@ -1,6 +1,29 @@
 <app-header></app-header>
 <div class="container d-flex flex-column h-100 mt-5">
-  <div class="h1 preknow-white">{{name}}</div>
+  <div class="d-flex align-items-center">
+    <div class="h1 preknow-white me-1">{{name}}</div>
+    @if (userLoggedIn){
+      @if (isSaved) {
+        <mat-icon
+          style="color: #D03F1B; font-size: 2.5rem; cursor: pointer; width: 2.5rem; height: 2.5rem;"
+          class="d-flex align-items-center justify-content-center"
+          matTooltip="Remove saved"
+          (click)="removeFromUser()"
+        >
+          check_circle
+        </mat-icon>
+      } @else {
+        <mat-icon
+          style="color: #D03F1B; font-size: 2.5rem; cursor: pointer; width: 2.5rem; height: 2.5rem;"
+          class="d-flex align-items-center justify-content-center"
+          matTooltip="Save crypto"
+          (click)="saveToUser()"
+        >
+          add_circle
+        </mat-icon>
+      }
+    }
+  </div>
   <div class="d-flex flex-wrap justify-content-between">
     <div class="preknow-white-bg rounded-3 w-45 d-flex flex-column justify-content-center align-items-center pk-card-container">
       <div class="h1 preknow-black mt-3 mb-5">Price History</div>

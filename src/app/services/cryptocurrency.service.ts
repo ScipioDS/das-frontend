@@ -25,4 +25,20 @@ export class CryptocurrencyService {
   getAllCryptocurrencyPaged(page: number, pageSize: number, filter: CryptoFilter): Observable<CryptoPage> {
     return this.http.post<CryptoPage>(`${this.baseUrl}/${page}/${pageSize}`, filter);
   }
+
+  findByTicker(ticker: string) {
+    return this.http.get<Cryptocurrency>(`${this.baseUrl}/${ticker}`);
+  }
+
+  getSavedCrypto(): Observable<Cryptocurrency[]>{
+    return this.http.get<Cryptocurrency[]>(this.baseUrl + '/saved');
+  }
+
+  saveCrypto(cryptocurrencyId: number): Observable<Cryptocurrency> {
+    return this.http.get<Cryptocurrency>(`${this.baseUrl}/save/${cryptocurrencyId}`);
+  }
+
+  removeCrypto(cryptocurrencyId: number): Observable<void> {
+    return this.http.get<void>(`${this.baseUrl}/unsave/${cryptocurrencyId}`);
+  }
 }
