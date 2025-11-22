@@ -5,45 +5,47 @@ import {DetailsPage} from './components/details-page/details-page';
 import {LoginPage} from './components/login-page/login-page';
 import {ProfilePage} from './components/profile-page/profile-page';
 
+const titleBase = 'PreKnow - ';
+
 export const routes: Routes = [
   {
     path: '',
     component: LandingPage,
-    title: 'PreKnow - Welcome'
+    title: titleBase + 'Welcome'
   },
   {
     path: 'explore',
     component: ListPage,
-    title: 'PreKnow - Explore'
+    title: titleBase + 'Explore'
   },
   {
     path: 'details/:name',
     component: DetailsPage,
-    title: 'PreKnow - Details'
+    title: titleBase + 'Details'
   },
   {
     path: 'search',
     loadComponent: () => import('./components/search-page/search-page').then(m => m.SearchPage),
-    title: 'PreKnow - Search Results'
+    title: titleBase + 'Search Results'
   },
   {
     path: 'login',
     component: LoginPage,
-    title: 'PreKnow - Details'
+    title: titleBase + 'Details'
   },
   {
     path: 'register',
     component: LoginPage,
-    title: 'PreKnow - Details'
+    title: titleBase + 'Details'
   },
   {
     path: 'profile/:id',
     component: ProfilePage,
-    title: 'PreKnow - Profile'
+    title: titleBase + 'Profile'
   },
   {
     path: '**',
     component: LandingPage,
-    title: 'PreKnow - Welcome'
+    title: titleBase + 'Welcome'
   }
 ];
