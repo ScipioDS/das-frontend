@@ -69,7 +69,7 @@ export class DetailsPage implements OnInit{
         (data: any[]) => {
           this.multi = [
             {
-              name: 'TBTC Close Price',
+              name: this.name + ' Close Price',
               series: data.map(item => ({
                 name: item.date.substring(0, 10),
                 value: item.close
