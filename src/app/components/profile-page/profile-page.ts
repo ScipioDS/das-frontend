@@ -28,7 +28,9 @@ export class ProfilePage implements OnInit {
       this.user = {
         email: user.email,
         id: user.id,
-        fullName: user.fullName
+        fullName: user.fullName,
+        role: user.role,
+        authorities: user.authorities,
       }
     })
 

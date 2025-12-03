@@ -4,6 +4,8 @@ import {ListPage} from './components/list-page/list-page';
 import {DetailsPage} from './components/details-page/details-page';
 import {LoginPage} from './components/login-page/login-page';
 import {ProfilePage} from './components/profile-page/profile-page';
+import {AdminPage} from './components/admin/admin-page/admin-page';
+import {adminGuard} from './services/admin.guard';
 
 const titleBase = 'PreKnow - ';
 
@@ -42,6 +44,12 @@ export const routes: Routes = [
     path: 'profile/:id',
     component: ProfilePage,
     title: titleBase + 'Profile'
+  },
+  {
+    path: 'admin',
+    component: AdminPage,
+    canActivate: [adminGuard],
+    title: titleBase + 'Admin'
   },
   {
     path: '**',
