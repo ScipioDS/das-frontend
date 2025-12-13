@@ -1,4 +1,4 @@
-import {Component, inject, OnInit} from '@angular/core';
+import {Component, inject, OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute} from '@angular/router';
 import {HeaderComponent} from '../atoms/header';
 import {NgxChartsModule, Color, ScaleType} from '@swimlane/ngx-charts';
@@ -11,6 +11,9 @@ import {UserService} from '../../services/user.service';
 import {MatIcon} from '@angular/material/icon';
 import {MatTooltip} from '@angular/material/tooltip';
 import {Cryptocurrency} from '../../models/cryptocurrency';
+import {Subject, takeUntil, switchMap, forkJoin, of} from 'rxjs';
+import {MatDialog} from '@angular/material/dialog';
+import {FullReport} from '../full-report/full-report';
 
 @Component({
   selector: 'app-details-page',
@@ -25,14 +28,18 @@ import {Cryptocurrency} from '../../models/cryptocurrency';
   templateUrl: './details-page.html',
   styleUrl: './details-page.css',
 })
-export class DetailsPage implements OnInit{
+export class DetailsPage implements OnInit, OnDestroy {
   cryptoService = inject(CryptocurrencyService);
   cryptoPriceService = inject(CryptoPriceService);
   userService = inject(UserService);
+  dialog = inject(MatDialog);
+
+  private destroy$ = new Subject<void>();
 
   crypto: any = null;
   user: any = null;
   userLoggedIn: boolean = false;
+  isAdmin: boolean = false;
   isSaved: boolean = false;
   savedCrypto: Cryptocurrency[] = [];
 
@@ -43,7 +50,7 @@ export class DetailsPage implements OnInit{
 
   // options for chart
   multi: any[] = multi;
-  view: [number, number] = [500, 300]; // Changed to tuple type
+  view: [number, number] = [500, 300];
   legend: boolean = false;
   xAxis: boolean = true;
   yAxis: boolean = true;
@@ -63,47 +70,67 @@ export class DetailsPage implements OnInit{
   constructor(private route: ActivatedRoute) {}
 
   ngOnInit(): void {
-    this.route.paramMap.subscribe(params => {
-      this.name = params.get('name') || '';
-      this.cryptoPriceService.getByTickerLastNMonths(this.name).subscribe(
-        (data: any[]) => {
-          this.multi = [
-            {
-              name: this.name + ' Close Price',
-              series: data.map(item => ({
-                name: item.date.substring(0, 10),
-                value: item.close
-              }))
-            }
-          ];
+    this.route.paramMap.pipe(
+      takeUntil(this.destroy$),
+      switchMap(params => {
+        this.name = params.get('name') || '';
+        return this.cryptoPriceService.getByTickerLastNMonths(this.name);
+      }),
+      switchMap((priceData: any[]) => {
+        // Process chart data
+        this.multi = [
+          {
+            name: this.name + ' Close Price',
+            series: priceData.map(item => ({
+              name: item.date.substring(0, 10),
+              value: item.close
+            }))
+          }
+        ];
 
-          this.cryptoService.findByTicker(this.name).subscribe(
-            data => {
-              this.crypto = data;
-              this.userService.getCurrentUser().subscribe(
-                (result: any) => {
-                  if (result) {
-                    this.user = result;
-                    this.userLoggedIn = true;
+        // Calculate last price
+        const mostRecent = priceData.reduce((a, b) =>
+          new Date(a.date) > new Date(b.date) ? a : b
+        );
+        this.lastPrice = mostRecent.close;
 
-                    this.cryptoService.getSavedCrypto().subscribe(
-                      (data: any) => {
-                        this.savedCrypto = data;
-                        this.isSaved = this.savedCrypto.some(saved => saved.id === this.crypto.id);
-                      }
-                    )
-                  }
-                }
-              )
+        // Get crypto details
+        return this.cryptoService.findByTicker(this.name);
+      }),
+      switchMap(crypto => {
+        this.crypto = crypto;
 
-            }
-          )
+        // Get current user
+        return this.userService.getCurrentUser();
+      }),
+      switchMap(user => {
+        if (user) {
+          this.user = user;
+          this.userLoggedIn = true;
+          this.isAdmin = user.role.name === 'ADMIN';
 
-          const mostRecent = data.reduce((a, b) => new Date(a.date) > new Date(b.date) ? a : b);
-          this.lastPrice = mostRecent.close; // This is the latest closing price
+          // Get saved crypto list
+          return this.cryptoService.getSavedCrypto();
         }
-      )
+        return of(null);
+      })
+    ).subscribe({
+      next: (savedCryptoData) => {
+        if (savedCryptoData) {
+          this.savedCrypto = savedCryptoData;
+          this.isSaved = this.savedCrypto.some(saved => saved.id === this.crypto.id);
+        }
+      },
+      error: (error) => {
+        console.error('Error loading crypto details:', error);
+        // Handle error appropriately (show error message to user, etc.)
+      }
     });
+  }
+
+  ngOnDestroy(): void {
+    this.destroy$.next();
+    this.destroy$.complete();
   }
 
   onSelect(data: any): void {
@@ -119,18 +146,47 @@ export class DetailsPage implements OnInit{
   }
 
   saveToUser() {
-    this.cryptoService.saveCrypto(this.crypto.id).subscribe(
-      (data: any) => {
-        this.isSaved = true;
-      }
-    )
+    this.cryptoService.saveCrypto(this.crypto.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isSaved = true;
+        },
+        error: (error) => {
+          console.error('Error saving crypto:', error);
+        }
+      });
   }
 
   removeFromUser() {
-    this.cryptoService.removeCrypto(this.crypto.id).subscribe(
-      (data: any) => {
-        this.isSaved = false;
+    this.cryptoService.removeCrypto(this.crypto.id)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.isSaved = false;
+        },
+        error: (error) => {
+          console.error('Error removing crypto:', error);
+        }
+      });
+  }
+
+  getFullReport() {
+    const dialogRef = this.dialog.open(FullReport, {
+      width: '800px',
+      maxWidth: '90vw',
+      data: {
+        crypto: this.crypto,
+        name: this.name
       }
-    )
+    });
+
+    // Optional: Handle dialog close event
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(result => {
+        console.log('Dialog closed', result);
+        // Handle any actions after dialog closes
+      });
   }
 }
