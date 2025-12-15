@@ -27,3 +27,8 @@ body{
   background-color: #20292B;
   font-family: Georgia, serif;
 }
+
+:root {
+  ----mat-focus-indicator-border-color: green;
+  --font-stack: Georgia, serif;
+}

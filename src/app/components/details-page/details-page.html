@@ -54,24 +54,28 @@
       </ngx-charts-line-chart>
     </div>
     <div class="preknow-white-bg rounded-3 w-45 d-flex flex-column justify-content-center align-items-center pk-card-container">
-      @if (isLoading) {
-        <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
-      } @else {
-        <div class="w-100 h-100 p-4">
-          <h2 class="preknow-black">Next Predicted Price:</h2>
-          <h3 class="preknow-black">{{predictedPrice | currency:'USD':'symbol':'1.2-2'}}</h3>
-          <mat-divider></mat-divider>
-          <h2 class="preknow-black mt-3">Trend:</h2>
-          <h3 class="preknow-black">Positive</h3>
-          <mat-divider></mat-divider>
-          <h2 class="preknow-black mt-3">Last Known Price:</h2>
-          <h3 class="preknow-black">{{lastPrice | currency:'USD':'symbol':'1.2-2'}}</h3>
-          <mat-divider></mat-divider>
-          <div class="text-end">
-            Powered by PreKnow AI
-          </div>
+      <div class="w-100 h-100 p-4">
+        <h2 class="preknow-black mt-3">Last Known Price:</h2>
+        <h3 class="preknow-black">{{lastPrice | currency:'USD':'symbol':'1.2-2'}}</h3>
+        @if (isLoading) {
+          <mat-progress-spinner mode="indeterminate" color="accent"></mat-progress-spinner>
+        } @else {
+          @if (predictedPrice) {
+            <mat-divider></mat-divider>
+            <h2 class="preknow-black">Next Predicted Price:</h2>
+            <h3 class="preknow-black">{{predictedPrice | currency:'USD':'symbol':'1.2-2'}}</h3>
+          }
+          @if (trend) {
+            <mat-divider></mat-divider>
+            <h2 class="preknow-black mt-3">Trend:</h2>
+            <h3 class="preknow-black">{{trend}}</h3>
+          }
+        }
+        <mat-divider></mat-divider>
+        <div class="text-end">
+          Powered by PreKnow AI
         </div>
-      }
+      </div>
     </div>
   </div>
 
@@ -79,12 +83,14 @@
     <div class="d-flex flex-row mt-3">
       <button
         class="btn btn-danger ms-3"
+        (click)="deleteCrypto()"
       >
         Delete Crypto
       </button>
 
       <button
         class="btn btn-light ms-3"
+        (click)="openEditDialog()"
       >
         Edit Crypto
       </button>

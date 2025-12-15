@@ -14,6 +14,8 @@ import {Cryptocurrency} from '../../models/cryptocurrency';
 import {Subject, takeUntil, switchMap, forkJoin, of} from 'rxjs';
 import {MatDialog} from '@angular/material/dialog';
 import {FullReport} from '../full-report/full-report';
+import {EditCrypto} from '../edit-crypto/edit-crypto';
+import {CryptoPrediction} from '../../services/prediction.service';
 
 @Component({
   selector: 'app-details-page',
@@ -31,6 +33,7 @@ import {FullReport} from '../full-report/full-report';
 export class DetailsPage implements OnInit, OnDestroy {
   cryptoService = inject(CryptocurrencyService);
   cryptoPriceService = inject(CryptoPriceService);
+  predictionService = inject(CryptoPrediction);
   userService = inject(UserService);
   dialog = inject(MatDialog);
 
@@ -47,6 +50,7 @@ export class DetailsPage implements OnInit, OnDestroy {
   isLoading: boolean = false;
   predictedPrice: number | null = null;
   lastPrice: number | null = null;
+  trend: string | null = null;
 
   // options for chart
   multi: any[] = multi;
@@ -120,10 +124,22 @@ export class DetailsPage implements OnInit, OnDestroy {
           this.savedCrypto = savedCryptoData;
           this.isSaved = this.savedCrypto.some(saved => saved.id === this.crypto.id);
         }
+        this.isLoading = true
+        this.predictionService.getLSTAnalysis(this.name).subscribe((predictionData) => {
+          if (predictionData.trend) {
+            this.trend = predictionData.trend;
+          }
+          if (predictionData.predictions && predictionData.predictions.length > 0) {
+            const latestPrediction = predictionData.predictions.reduce((a: any, b: any) =>
+              new Date(a.date) > new Date(b.date) ? a : b
+            );
+            this.predictedPrice = latestPrediction.predicted_price;
+          }
+          this.isLoading = false;
+        });
       },
       error: (error) => {
         console.error('Error loading crypto details:', error);
-        // Handle error appropriately (show error message to user, etc.)
       }
     });
   }
@@ -181,12 +197,37 @@ export class DetailsPage implements OnInit, OnDestroy {
       }
     });
 
-    // Optional: Handle dialog close event
     dialogRef.afterClosed()
       .pipe(takeUntil(this.destroy$))
       .subscribe(result => {
         console.log('Dialog closed', result);
-        // Handle any actions after dialog closes
       });
+  }
+
+  openEditDialog() {
+    const dialogRef = this.dialog.open(EditCrypto, {
+      width: '600px',
+      maxWidth: '90vw',
+      data: {
+        crypto: this.crypto
+      }
+    });
+
+    dialogRef.afterClosed()
+      .pipe(takeUntil(this.destroy$))
+      .subscribe(result => {
+        if (result) {
+          console.log('Cryptocurrency updated:', result);
+          // Refresh the crypto data
+          this.crypto = result;
+        }
+      });
+  }
+
+  deleteCrypto() {
+    if (confirm(`Are you sure you want to delete ${this.crypto.name}?`)) {
+      // Add your delete logic here
+      console.log('Delete crypto:', this.crypto.id);
+    }
   }
 }

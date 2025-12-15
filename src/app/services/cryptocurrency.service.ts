@@ -4,7 +4,7 @@ import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {CryptoPage} from '../models/interfaces/page-response';
 import {CryptoFilter} from '../models/filter/CryptoFilter';
-import {Cryptocurrency} from '../models/cryptocurrency';
+import {Cryptocurrency, CryptocurrencyHelper} from '../models/cryptocurrency';
 
 @Injectable({
   providedIn: 'root'
@@ -40,5 +40,13 @@ export class CryptocurrencyService {
 
   removeCrypto(cryptocurrencyId: number): Observable<void> {
     return this.http.get<void>(`${this.baseUrl}/unsave/${cryptocurrencyId}`);
+  }
+
+  createCryptocurrency(crypto: CryptocurrencyHelper): Observable<Cryptocurrency> {
+    return this.http.post<Cryptocurrency>(this.baseUrl + '/create', crypto);
+  }
+
+  updateCryptocurrency(id: string, crypto: CryptocurrencyHelper): Observable<Cryptocurrency> {
+    return this.http.post<Cryptocurrency>(`${this.baseUrl}/update/${id}`, crypto);
   }
 }

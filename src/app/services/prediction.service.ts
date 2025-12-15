@@ -15,4 +15,9 @@ export class CryptoPrediction {
     const params = new HttpParams().set('ticker', ticker);
     return this.http.get<any[]>(`${this.baseUrl}/analysis/complete`, { params });
   }
+
+  getLSTAnalysis(ticker: string, months: number = 3): Observable<any> {
+    const params = new HttpParams().set('ticker', ticker);
+    return this.http.get<any>(`${this.baseUrl}/lstm-analysis`, { params });
+  }
 }

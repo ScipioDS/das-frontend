@@ -1,0 +1,106 @@
+::ng-deep .mat-mdc-dialog-container {
+  max-height: 90vh;
+  overflow: auto;
+}
+
+.mat-mdc-dialog-title::before {
+  content: none; /* This removes the ::before pseudo-element */
+}
+
+.mat-mdc-dialog-title {
+  font-family: Georgia, "Times New Roman", serif;
+}
+
+.report-content {
+  min-width: 750px;
+}
+
+.indicator-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  margin-top: 10px;
+}
+
+.indicator-item {
+  padding: 10px;
+  background: #f5f5f5;
+  border-radius: 4px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.onchain-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.metric-item {
+  padding: 8px 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #eee;
+}
+
+.metric-item:last-child {
+  border-bottom: none;
+}
+
+.prediction-summary {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+  padding: 20px;
+  background: #f9f9f9;
+  border-radius: 8px;
+}
+
+.prediction-item {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 15px;
+}
+
+mat-card {
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+mat-card-header {
+  margin-bottom: 16px;
+}
+
+mat-chip {
+  font-weight: 600;
+}
+
+table {
+  font-size: 14px;
+}
+
+th {
+  font-weight: 600;
+  color: #666;
+}
+
+@media (max-width: 768px) {
+  .report-content {
+    min-width: unset;
+  }
+
+  .indicator-grid,
+  .onchain-grid,
+  .prediction-summary,
+  .metrics-grid {
+    grid-template-columns: 1fr;
+  }
+}
