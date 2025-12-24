@@ -17,17 +17,25 @@ import {User} from '../../models/user';
         <div class="h1 preknow-white preknow-logo" routerLink="/explore">
           PreKnow
         </div>
-        <mat-form-field appearance="fill" class="search-field">
-          <input
-            matInput
-            type="search"
-            placeholder="Search..."
-            [(ngModel)]="searchQuery"
-            (keyup.enter)="onSearch()">
-          <button matSuffix mat-icon-button aria-label="Search" class="me-2" (click)="onSearch()">
-            <mat-icon>search</mat-icon>
+        <div>
+          <button
+            class="btn btn-light me-3"
+            routerLink="/admin"
+          >
+            Open Admin Page
           </button>
-        </mat-form-field>
+          <mat-form-field appearance="fill" class="search-field">
+            <input
+              matInput
+              type="search"
+              placeholder="Search..."
+              [(ngModel)]="searchQuery"
+              (keyup.enter)="onSearch()">
+            <button matSuffix mat-icon-button aria-label="Search" class="me-2" (click)="onSearch()">
+              <mat-icon>search</mat-icon>
+            </button>
+          </mat-form-field>
+        </div>
       </header>
       <mat-divider class="preknow-white"></mat-divider>
       <div class="d-flex justify-content-between mt-2">
@@ -69,6 +77,7 @@ export class HeaderComponent implements OnInit {
   searchQuery: string = '';
   userSource: User | null = null;
   user: string = 'Log In';
+  isAdmin: boolean = false;
 
   constructor(
     private router: Router,
@@ -81,6 +90,7 @@ export class HeaderComponent implements OnInit {
         if (res) {
           this.userSource = res;
           this.user = res.email;
+          this.isAdmin = res.role.name === 'ADMIN';
         }
       }
     );

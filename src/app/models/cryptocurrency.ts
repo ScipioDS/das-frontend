@@ -5,3 +5,9 @@ export interface Cryptocurrency {
   last_updated: Date;
   price: number;
 }
+
+export interface CryptocurrencyHelper {
+  ticker: string;
+  name: string;
+  price: number;
+}

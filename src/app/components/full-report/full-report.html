@@ -1,0 +1,445 @@
+<div mat-dialog-title>
+  <div class="d-flex flex-row justify-content-between mt-3">
+    <h2>Complete Analysis Report: {{ name }}</h2>
+    <button mat-icon-button (click)="close()">
+      <mat-icon>close</mat-icon>
+    </button>
+  </div>
+</div>
+
+<mat-dialog-content>
+  @if (isLoading) {
+    <div style="display: flex; justify-content: center; padding: 40px;">
+      <mat-spinner></mat-spinner>
+    </div>
+  }
+
+  @if (error) {
+    <div style="padding: 20px; text-align: center; color: red;">
+      <mat-icon>error</mat-icon>
+      <p>{{ error }}</p>
+    </div>
+  }
+
+  @if (analysisData && !isLoading) {
+    <div class="report-content">
+      <!-- Overall Signal -->
+      <mat-card style="margin-bottom: 20px;">
+        <mat-card-header>
+          <mat-card-title>Overall Signal</mat-card-title>
+        </mat-card-header>
+        <mat-card-content>
+          <div style="display: flex; align-items: center; gap: 10px;">
+            <mat-chip [color]="getSignalColor(analysisData.overallSignal)" selected>
+              {{ analysisData.overallSignal }}
+            </mat-chip>
+            <span style="font-size: 24px; font-weight: bold;">
+              {{ analysisData.overallSignal }}
+            </span>
+          </div>
+        </mat-card-content>
+      </mat-card>
+
+      <!-- Tabs for different sections -->
+      <mat-tab-group>
+        @if (analysisData.indicators.final_signal !== null) {
+        <!-- Technical Indicators Tab -->
+        <mat-tab label="Technical Indicators">
+          <div style="padding: 20px;">
+            <h3>Final Signal:
+              <mat-chip [color]="getSignalColor(analysisData.indicators.final_signal)" selected>
+                {{ analysisData.indicators.final_signal }}
+              </mat-chip>
+            </h3>
+
+            <mat-card style="margin: 20px 0;">
+              <mat-card-header>
+                <mat-card-title>Oscillators</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="indicator-grid">
+                  <div class="indicator-item">
+                    <strong>MACD Signal:</strong>
+                    <span>{{ analysisData.indicators.oscillators.macdsignal?.toFixed(2) || 'N/A' }}</span>
+                  </div>
+                  <div class="indicator-item">
+                    <strong>RSI:</strong>
+                    <span>{{ analysisData.indicators.oscillators.rsi || 'N/A' }}</span>
+                  </div>
+                  <div class="indicator-item">
+                    <strong>Stochastic:</strong>
+                    <span>{{ analysisData.indicators.oscillators.stochastic || 'N/A' }}</span>
+                  </div>
+                  <div class="indicator-item">
+                    <strong>CCI:</strong>
+                    <span>{{ analysisData.indicators.oscillators.cci || 'N/A' }}</span>
+                  </div>
+                  <div class="indicator-item">
+                    <strong>ADX:</strong>
+                    <span>{{ analysisData.indicators.oscillators.adx || 'N/A' }}</span>
+                  </div>
+                </div>
+                <div style="margin-top: 15px;">
+                  <strong>Signals:</strong>
+                  <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px;">
+                    @for (signal of analysisData.indicators.oscillator_signals; track $index) {
+                      <mat-chip [color]="getSignalColor(signal)" selected>{{ signal }}</mat-chip>
+                    }
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card style="margin: 20px 0;">
+              <mat-card-header>
+                <mat-card-title>Trends & Moving Averages</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="indicator-grid">
+                  <div class="indicator-item">
+                    <strong>SMA:</strong>
+                    <span>{{ analysisData.indicators.trends.sma || 'N/A' }}</span>
+                  </div>
+                  <div class="indicator-item">
+                    <strong>EMA:</strong>
+                    <span>{{ analysisData.indicators.trends.ema || 'N/A' }}</span>
+                  </div>
+                  <div class="indicator-item">
+                    <strong>WMA:</strong>
+                    <span>{{ analysisData.indicators.trends.wma || 'N/A' }}</span>
+                  </div>
+                  <div class="indicator-item">
+                    <strong>Bollinger Position:</strong>
+                    <span>{{ analysisData.indicators.trends.Bollinger_Position?.toFixed(4) || 'N/A' }}</span>
+                  </div>
+                </div>
+                <div style="margin-top: 15px;">
+                  <strong>MA Signals:</strong>
+                  <div style="display: flex; gap: 5px; flex-wrap: wrap; margin-top: 5px;">
+                    @for (signal of analysisData.indicators.ma_signals; track $index) {
+                      <mat-chip [color]="getSignalColor(signal)" selected>{{ signal }}</mat-chip>
+                    }
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+        } @else {
+          <!-- Technical Indicators Tab - No Data -->
+          <mat-tab label="Technical Indicators">
+            <div style="padding: 20px; text-align: center; color: gray;">
+              <mat-icon>info</mat-icon>
+              <p>No technical indicator data available for this cryptocurrency.</p>
+            </div>
+          </mat-tab>
+        }
+
+        <!-- On-Chain Analysis Tab -->
+        @if(analysisData.onchain.metrics !== null) {
+          <mat-tab label="On-Chain Analysis">
+          <div style="padding: 20px;">
+            <h3>Final Signal:
+              <mat-chip [color]="getSignalColor(analysisData.onchain.final_signal)" selected>
+                {{ analysisData.onchain.final_signal }}
+              </mat-chip>
+            </h3>
+
+            <div class="onchain-grid">
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>Exchange Flows</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="metric-item">
+                    <strong>Inflow:</strong> {{ analysisData.onchain.metrics.exchange_flows.inflow }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>Outflow:</strong> {{ analysisData.onchain.metrics.exchange_flows.outflow }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>Net Flow:</strong> {{ analysisData.onchain.metrics.exchange_flows.net_flow }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>Signal:</strong>
+                    <mat-chip [color]="getSignalColor(analysisData.onchain.metrics.exchange_flows.signal)" selected>
+                      {{ analysisData.onchain.metrics.exchange_flows.signal }}
+                    </mat-chip>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>MVRV Ratio</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="metric-item">
+                    <strong>Ratio:</strong> {{ analysisData.onchain.metrics.mvrv_ratio.mvrv_ratio }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>Signal:</strong>
+                    <mat-chip [color]="getSignalColor(analysisData.onchain.metrics.mvrv_ratio.signal)" selected>
+                      {{ analysisData.onchain.metrics.mvrv_ratio.signal }}
+                    </mat-chip>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>NVT Ratio</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="metric-item">
+                    <strong>Ratio:</strong> {{ analysisData.onchain.metrics.nvt_ratio.nvt_ratio }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>Signal:</strong>
+                    <mat-chip [color]="getSignalColor(analysisData.onchain.metrics.nvt_ratio.signal)" selected>
+                      {{ analysisData.onchain.metrics.nvt_ratio.signal }}
+                    </mat-chip>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>Whale Movements</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="metric-item">
+                    <strong>Transaction Count:</strong> {{ analysisData.onchain.metrics.whale_movements.whale_tx_count }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>Avg Transaction Size:</strong> {{ analysisData.onchain.metrics.whale_movements.avg_tx_size }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>Signal:</strong>
+                    <mat-chip [color]="getSignalColor(analysisData.onchain.metrics.whale_movements.signal)" selected>
+                      {{ analysisData.onchain.metrics.whale_movements.signal }}
+                    </mat-chip>
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+        } @else {
+          <!-- On-Chain Analysis Tab - No Data -->
+          <mat-tab label="On-Chain Analysis">
+            <div style="padding: 20px; text-align: center; color: gray;">
+              <mat-icon>info</mat-icon>
+              <p>No on-chain analysis data available for this cryptocurrency.</p>
+            </div>
+          </mat-tab>
+        }
+
+
+        <!-- Sentiment Analysis Tab -->
+        @if (analysisData.sentiment.final_signal !== null) {
+        <mat-tab label="Sentiment">
+          <div style="padding: 20px;">
+            <h3>Final Signal:
+              <mat-chip [color]="getSignalColor(analysisData.sentiment.final_signal)" selected>
+                {{ analysisData.sentiment.final_signal }}
+              </mat-chip>
+            </h3>
+
+            <mat-card style="margin: 20px 0;">
+              <mat-card-header>
+                <mat-card-title>Fear & Greed Index</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div style="text-align: center;">
+                  <div style="font-size: 48px; font-weight: bold; margin: 20px 0;">
+                    {{ analysisData.sentiment.social_sentiment.fear_greed_index.value }}
+                  </div>
+                  <mat-chip
+                    [color]="getSentimentColor(analysisData.sentiment.social_sentiment.fear_greed_index.sentiment)"
+                    selected
+                    style="font-size: 16px; padding: 10px 20px;">
+                    {{ analysisData.sentiment.social_sentiment.fear_greed_index.classification }}
+                  </mat-chip>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>News Sentiment</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="metric-item">
+                    <strong>Overall:</strong>
+                    <mat-chip [color]="getSentimentColor(analysisData.sentiment.news_sentiment.aggregate.overall_sentiment)" selected>
+                      {{ analysisData.sentiment.news_sentiment.aggregate.overall_sentiment }}
+                    </mat-chip>
+                  </div>
+                  <div class="metric-item">
+                    <strong>Article Count:</strong> {{ analysisData.sentiment.news_sentiment.aggregate.article_count }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>TextBlob Avg:</strong> {{ analysisData.sentiment.news_sentiment.aggregate.textblob_avg?.toFixed(3) }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>VADER Avg:</strong> {{ analysisData.sentiment.news_sentiment.aggregate.vader_avg?.toFixed(3) }}
+                  </div>
+                </mat-card-content>
+              </mat-card>
+
+              <mat-card>
+                <mat-card-header>
+                  <mat-card-title>Social Sentiment</mat-card-title>
+                </mat-card-header>
+                <mat-card-content>
+                  <div class="metric-item">
+                    <strong>Overall:</strong>
+                    <mat-chip [color]="getSentimentColor(analysisData.sentiment.social_sentiment.aggregate.overall_sentiment)" selected>
+                      {{ analysisData.sentiment.social_sentiment.aggregate.overall_sentiment }}
+                    </mat-chip>
+                  </div>
+                  <div class="metric-item">
+                    <strong>Combined Score:</strong> {{ analysisData.sentiment.social_sentiment.aggregate.combined_score?.toFixed(3) }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>Data Points:</strong> {{ analysisData.sentiment.social_sentiment.aggregate.data_points }}
+                  </div>
+                </mat-card-content>
+              </mat-card>
+            </div>
+          </div>
+        </mat-tab>
+        } @else {
+          <!-- Sentiment Analysis Tab - No Data -->
+          <mat-tab label="Sentiment">
+            <div style="padding: 20px; text-align: center; color: gray;">
+              <mat-icon>info</mat-icon>
+              <p>No sentiment analysis data available for this cryptocurrency.</p>
+            </div>
+          </mat-tab>
+        }
+
+        <!-- LSTM Predictions Tab -->
+        @if (analysisData.lstmAnalysis.current_price !== null) {
+        <mat-tab label="Price Predictions">
+          <div style="padding: 20px;">
+            <mat-card style="margin-bottom: 20px;">
+              <mat-card-header>
+                <mat-card-title>LSTM Analysis</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="prediction-summary">
+                  <div class="prediction-item">
+                    <strong>Current Price:</strong>
+                    <span style="font-size: 24px;">${{ analysisData.lstmAnalysis.current_price?.toLocaleString() }}</span>
+                  </div>
+                  <div class="prediction-item">
+                    <strong>Trend:</strong>
+                    <mat-chip [color]="getSignalColor(analysisData.lstmAnalysis.trend)" selected>
+                      {{ analysisData.lstmAnalysis.trend }}
+                    </mat-chip>
+                  </div>
+                  <div class="prediction-item">
+                    <strong>Price Change:</strong>
+                    <span [style.color]="analysisData.lstmAnalysis.price_change > 0 ? 'green' : 'red'">
+                      {{ analysisData.lstmAnalysis.price_change > 0 ? '+' : '' }}${{ analysisData.lstmAnalysis.price_change?.toLocaleString() }}
+                      ({{ analysisData.lstmAnalysis.price_change_percent?.toFixed(2) }}%)
+                    </span>
+                  </div>
+                </div>
+
+                <!-- Prediction Chart -->
+                @if (predictionChartData.length > 0) {
+                  <div style="margin-top: 20px;">
+                    <ngx-charts-line-chart
+                      [view]="[700, 300]"
+                      [results]="predictionChartData"
+                      [xAxis]="true"
+                      [yAxis]="true"
+                      [legend]="true"
+                      [showXAxisLabel]="true"
+                      [showYAxisLabel]="true"
+                      xAxisLabel="Date"
+                      yAxisLabel="Predicted Price (USD)">
+                    </ngx-charts-line-chart>
+                  </div>
+                }
+              </mat-card-content>
+            </mat-card>
+
+            <mat-card>
+              <mat-card-header>
+                <mat-card-title>Model Performance Metrics</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <div class="metrics-grid">
+                  <div class="metric-item">
+                    <strong>MAPE:</strong> {{ analysisData.lstmAnalysis.model_metrics.mape?.toFixed(2) }}%
+                  </div>
+                  <div class="metric-item">
+                    <strong>RMSE:</strong> {{ analysisData.lstmAnalysis.model_metrics.rmse?.toFixed(2) }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>R² Score:</strong> {{ analysisData.lstmAnalysis.model_metrics.r2_score?.toFixed(4) }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>Training Samples:</strong> {{ analysisData.lstmAnalysis.model_metrics.training_samples }}
+                  </div>
+                  <div class="metric-item">
+                    <strong>Test Samples:</strong> {{ analysisData.lstmAnalysis.model_metrics.test_samples }}
+                  </div>
+                </div>
+              </mat-card-content>
+            </mat-card>
+
+            <!-- Predictions Table -->
+            <mat-card style="margin-top: 20px;">
+              <mat-card-header>
+                <mat-card-title>Detailed Predictions</mat-card-title>
+              </mat-card-header>
+              <mat-card-content>
+                <table style="width: 100%; border-collapse: collapse;">
+                  <thead>
+                  <tr style="border-bottom: 2px solid #ddd;">
+                    <th style="padding: 10px; text-align: left;">Date</th>
+                    <th style="padding: 10px; text-align: right;">Predicted Price</th>
+                  </tr>
+                  </thead>
+                  <tbody>
+                    @for (pred of analysisData.lstmAnalysis.predictions; track $index) {
+                      <tr style="border-bottom: 1px solid #eee;">
+                        <td style="padding: 10px;">{{ pred.date | date: 'medium' }}</td>
+                        <td style="padding: 10px; text-align: right; font-weight: bold;">
+                          ${{ pred.predicted_price?.toLocaleString() }}
+                        </td>
+                      </tr>
+                    }
+                  </tbody>
+                </table>
+              </mat-card-content>
+            </mat-card>
+          </div>
+        </mat-tab>
+        } @else {
+          <!-- LSTM Predictions Tab - No Data -->
+          <mat-tab label="Price Predictions">
+            <div style="padding: 20px; text-align: center; color: gray;">
+              <mat-icon>info</mat-icon>
+              <p>No price prediction data available for this cryptocurrency.</p>
+            </div>
+          </mat-tab>
+        }
+      </mat-tab-group>
+    </div>
+  }
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button (click)="close()">Close</button>
+<!--  <button mat-raised-button color="primary">-->
+<!--    <mat-icon>download</mat-icon>-->
+<!--    Download Report-->
+<!--  </button>-->
+</mat-dialog-actions>
