@@ -1,0 +1,15 @@
+# frontend/.dockerignore
+node_modules/
+dist/
+.angular/
+.cache/
+*.log
+.git
+.gitignore
+.env
+*.md
+e2e/
+karma.conf.js
+.editorconfig
+.vscode/
+.idea/

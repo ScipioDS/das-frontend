@@ -18,12 +18,14 @@ import {User} from '../../models/user';
           PreKnow
         </div>
         <div>
-          <button
-            class="btn btn-light me-3"
-            routerLink="/admin"
-          >
-            Open Admin Page
-          </button>
+          @if (isAdmin) {
+            <button
+              class="btn btn-light me-3"
+              routerLink="/admin"
+            >
+              Open Admin Page
+            </button>
+          }
           <mat-form-field appearance="fill" class="search-field">
             <input
               matInput
